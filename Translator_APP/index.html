@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #Container{
+             display: flex;
+             box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+             width: 70%;
+             margin: auto;
+             border-radius: 10px;
+             background-color:grey;
+             margin-top: 70px;
+        }
+        #Input,#Output{
+            flex:1;
+            margin: 5%;
+            height: 350px;
+            border: 1px solid black;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            border-radius: 15px;
+         
+
+        }
+        #input-text,#output_value{
+            width: 90%;
+            height: 250px;
+            margin: 10px;
+            border-radius: 10px;
+            font-size: 25px;
+            font-family: sans-serif;
+            padding: 5px;
+        }
+        select
+        {
+            height: 30px;
+            width: 120px;
+            border-radius: 10px;
+            margin-top: 10px;
+            margin: 10px;
+            font-size: 18px;
+            font-family: sans-serif;
+            
+        }
+        select:hover , #btn:hover
+        {
+            border: 2px solid rgb(70, 70, 203);
+
+        }
+        #btn
+        {
+            height: 40px;
+            width: 140px;
+            border-radius: 10px;
+            margin-top: 10px;
+            background-color: white;
+            font-size: 21px;
+            font-family: sans-serif;
+           
+        }
+    </style>
+</head>
+<body>
+    <div id="Container">
+        <div id="Input">
+            <!-- for multipoal lang creating this option and passing hi en ma for api to consider eaisly
+             -->
+             <form id="form">
+            <select name="inp_lang" id="inp_lang">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+            
+                <option value="ma">Marathi</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form >
+            <!-- //<button id="btn" >Translate</button>// -->
+            <textarea name="" id="input-text" oninput="debounce(main,1000)"  placeholder="Enter Text to Translate"></textarea>
+        
+        </div>
+        <div id="Output">
+            <form id="form">
+            <select name="op_lang" id="op_lang">
+                <option value="hi">Hindi</option>
+                <option value="en">English</option>
+              
+                <option value="ma">Marathi</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form >
+            <div id="op_here">
+                <textarea name="" id="output_value" ></textarea>
+                <h4 id="output_value">
+                    
+                </h4>
+
+            </div>
+           
+        </div>
+    </div>
+    
+</body>
+</html>
+<script> 
+let id;
+    //helper functions 
+    function read(id)
+        {
+            return document.getElementById(id).value
+        }
+
+      async function Translate()
+        {
+            try{
+                //takes valu automaticallly from read( function )
+                 const input = read("input-text")
+                 const input_lang=read("inp_lang")
+                 const op_lang= read("op_lang")
+
+            console.log(input)
+            //const url =`https://libretranslate.com/translate`
+
+            const res = await fetch("https://libretranslate.de/translate",{
+                method:"POST",
+                body:JSON.stringify({
+                q:input,
+                source:input_lang,
+                target:op_lang,
+                format:"text",
+                    }),
+
+                    //what kind of resqusting is sendg to the srever must be knwo to it
+                    //Header= additional info about our resquest that server might need to know
+                    //conten-type send to ther server =
+
+
+                    //whenever u found the api is not worjking sever is dumb  evrything is correct stil the server is not acceptint the requsets and showing 403 or 400 error must 
+                    //use this type of method Content-Type "applixcation/json"
+                    //there are multipal headres are used
+                
+                    headers : {
+                               "Content-Type" : "application/json",
+                            }
+           })
+            //or const {translatedText}= awit res.json();
+            //use of this will esure you cas use transltedText directly rather than using  data.tranlatedText
+            //const {translatedText}=  await res.json();  after writing this no need to  write data .transfar
+
+         const data = await res.json();
+         console.log(data)
+     let datas = data.translatedText
+       return datas
+        //  let op = document.getElementById("output_value")
+        //  op.innerText=data.translatedText;
+        
+    }
+        catch(error)
+        {
+            console.log(error)
+        }      
+     }
+  
+     function append(data)
+     { 
+       
+        let op = document.getElementById("output_value")
+        op.innerHTML=null;
+        op.textContent=data;
+
+     }
+
+     async function  main()
+     {
+         let data = await Translate()
+         if(data === undefined)
+         {
+             return false
+         }
+       append(data)
+    
+    }
+    function debounce(func,delay)
+     {
+          if(id)
+          {
+              clearTimeout(id)
+          }
+         id=setTimeout(function(){
+
+            func()
+         },delay)
+
+     }
+
+ var synth = window.speechSynthesis;
+var voices = synth.getVoices();
+
+var inputForm = document.querySelector('form');
+var inputTxt = document.querySelector('input-text');
+var voiceSelect = document.querySelector('op_lang');
+
+for(var i = 0; i < voices.length; i++) {
+  var option = document.createElement('option');
+  option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+  option.value = i;
+  voiceSelect.appendChild(option);
+}
+inputForm.onsubmit = function(event) {
+  event.preventDefault();
+  var utterThis = new SpeechSynthesisUtterance(inputTxt.value);
+  utterThis.voice = voices[voiceSelect.value];
+  synth.speak(utterThis);
+  inputTxt.blur();
+}
+</script>
+ 
