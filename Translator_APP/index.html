@@ -122,7 +122,6 @@ let id;
 
             console.log(input)
             //const url =`https://libretranslate.com/translate`
-
             const res = await fetch("https://libretranslate.de/translate",{
                 method:"POST",
                 body:JSON.stringify({
@@ -134,8 +133,7 @@ let id;
 
                     //what kind of resqusting is sendg to the srever must be knwo to it
                     //Header= additional info about our resquest that server might need to know
-                    //conten-type send to ther server =
-
+                    //conten-type send to ther server
 
                     //whenever u found the api is not worjking sever is dumb  evrything is correct stil the server is not acceptint the requsets and showing 403 or 400 error must 
                     //use this type of method Content-Type "applixcation/json"
@@ -162,16 +160,12 @@ let id;
             console.log(error)
         }      
      }
-  
      function append(data)
-     { 
-       
+     {
         let op = document.getElementById("output_value")
         op.innerHTML=null;
-        op.textContent=data;
-
+        op.textContent=data
      }
-
      async function  main()
      {
          let data = await Translate()
@@ -180,7 +174,6 @@ let id;
              return false
          }
        append(data)
-    
     }
     function debounce(func,delay)
      {
@@ -192,7 +185,6 @@ let id;
 
             func()
          },delay)
-
      }
 
  var synth = window.speechSynthesis;
